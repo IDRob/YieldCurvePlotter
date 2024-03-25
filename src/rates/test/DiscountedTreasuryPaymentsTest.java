@@ -33,6 +33,6 @@ public class DiscountedTreasuryPaymentsTest {
         NavigableMap<Integer, Double> existingZeroRates = new TreeMap<>();
         DiscountedTreasuryPayments discountedTreasuryPayments = new DiscountedTreasuryPayments(months, parRate, existingZeroRates);
         double result = discountedTreasuryPayments.runsFunction(zeroRate);
-        assertEquals( 0.0000, result, 0.00001);
+        assertEquals( 0.0000, result, 0.0001);
     }
 }

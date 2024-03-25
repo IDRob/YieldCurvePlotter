@@ -1,7 +1,5 @@
 package numericalsolutions.interpolator;
 
-import numericalsolutions.interpolator.Interpolator;
-
 import java.util.Map;
 import java.util.NavigableMap;
 
@@ -19,9 +17,14 @@ public class LogarithmicInterpolator implements Interpolator {
         Map.Entry<Integer, Double> floorEntry = dataPoints.floorEntry(key);
         Map.Entry<Integer, Double> ceilingEntry = dataPoints.ceilingEntry(key);
 
+        if ((floorEntry == null) || (ceilingEntry == null) ) {
+            throw new IllegalArgumentException("Cannot interpolate value for key that is outside of datapoint keys");
+        }
         if (floorEntry.equals(ceilingEntry)) {
             return floorEntry.getValue();
         }
+
+
         double lnFloor = log(floorEntry.getValue());
         double lnCeiling = log(ceilingEntry.getValue());
 

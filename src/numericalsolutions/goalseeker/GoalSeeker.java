@@ -54,6 +54,11 @@ public class GoalSeeker {
             previousStep = StrictMath.abs(currentX - previousX);
         }
 
+        if (iter == 0) {
+            throw new RuntimeException("Iterative process did not find solution within required " +
+                    "precision within 100 iterations.");
+        }
+
         return currentX;
     }
 

@@ -63,40 +63,34 @@ public class WidgetWindow {
 
         frame.setVisible(true);
 
-        btn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LocalDate selectedDate =(LocalDate) cb.getSelectedItem();
+        btn.addActionListener(e -> {
+            LocalDate selectedDate =(LocalDate) cb.getSelectedItem();
 
-                if (selectedDate != null) {
-                    NavigableMap<Integer, Double> dateSpecificParData =
-                            usTreasuryDataReader.getsParDataForDate(selectedDate, usTreasuryRateData);
+            if (selectedDate != null) {
+                NavigableMap<Integer, Double> dateSpecificParData =
+                        usTreasuryDataReader.getsParDataForDate(selectedDate, usTreasuryRateData);
 
-                    Curves curves = Curves.of(precision, interpolator, dateSpecificParData);
+                Curves curves = Curves.of(precision, interpolator, dateSpecificParData);
 
-                    PlotGraphJFree chart = new PlotGraphJFree("Yield Curve Plotter",
-                            "Treasury Yield Curves: " + selectedDate, curves);
-                    chart.pack();
-                    chart.setVisible( true );
-                    RefineryUtilities.centerFrameOnScreen( chart );
-                }
-
+                PlotGraphJFree chart = new PlotGraphJFree("Yield Curve Plotter",
+                        "Treasury Yield Curves: " + selectedDate, curves);
+                chart.pack();
+                chart.setVisible( true );
+                RefineryUtilities.centerFrameOnScreen( chart );
             }
+
         });
 
-        downloadBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LocalDate selectedDate =(LocalDate) cb.getSelectedItem();
+        downloadBtn.addActionListener(e -> {
+            LocalDate selectedDate =(LocalDate) cb.getSelectedItem();
 
-                if (selectedDate != null) {
-                    NavigableMap<Integer, Double> dateSpecificParData =
-                            usTreasuryDataReader.getsParDataForDate(selectedDate, usTreasuryRateData);
+            if (selectedDate != null) {
+                NavigableMap<Integer, Double> dateSpecificParData =
+                        usTreasuryDataReader.getsParDataForDate(selectedDate, usTreasuryRateData);
 
-                    Curves curves = Curves.of(precision, interpolator, dateSpecificParData);
+                Curves curves = Curves.of(precision, interpolator, dateSpecificParData);
 
-                    CsvWriter.writeCurvesToCsv(curves, selectedDate);
-                }
+                CsvWriter.writeCurvesToCsv(curves, selectedDate);
             }
         });
     }

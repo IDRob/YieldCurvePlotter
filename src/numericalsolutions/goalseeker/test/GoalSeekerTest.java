@@ -9,6 +9,8 @@ import java.util.TreeMap;
 
 import static java.lang.Math.pow;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 /**
  * The test class for the Goal Seeker Class.
@@ -66,6 +68,16 @@ public class GoalSeekerTest {
         GoalSeeker goalSeeker = new GoalSeeker(discountedTreasuryPayments);
         double result = goalSeeker.secantMethod( 0, PRECISION);
         assertEquals(expectedZeroRate, result, PRECISION * 2);
+    }
+
+    @Test
+    public void testThrowsRuntimeExceptionFor100Iterations() {
+        int months = 6;
+        double parRate = 0.0152;
+        NavigableMap<Integer, Double> existingZeroRates = new TreeMap<>();
+        DiscountedTreasuryPayments discountedTreasuryPayments = new DiscountedTreasuryPayments(months, parRate, existingZeroRates);
+        GoalSeeker goalSeeker = new GoalSeeker(discountedTreasuryPayments);
+        assertThrowsExactly(RuntimeException.class, () -> goalSeeker.secantMethod( -1, PRECISION));
     }
 
 

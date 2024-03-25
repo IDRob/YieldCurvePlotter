@@ -14,5 +14,5 @@ public interface Interpolator {
      * @param dataPoints the data points to interpolate from
      * @return interpolated value for given key
      */
-    public double interpolate(int key, NavigableMap<Integer, Double> dataPoints);
+    double interpolate(int key, NavigableMap<Integer, Double> dataPoints);
 }

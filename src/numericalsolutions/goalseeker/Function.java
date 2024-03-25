@@ -11,6 +11,6 @@ public interface Function {
      * @param inputValue the input value to the function
      * @return the result of the function
      */
-    public double runsFunction(double inputValue);
+    double runsFunction(double inputValue);
 
 }

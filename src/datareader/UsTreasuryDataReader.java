@@ -118,14 +118,14 @@ public class UsTreasuryDataReader {
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
-        DocumentBuilder docBuilder = null;
+        DocumentBuilder docBuilder;
         try {
             docBuilder = dbf.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             throw new RuntimeException(e);
         }
 
-        URI uri = null;
+        URI uri;
         try {
             uri = new URI(BASE_URL +year);
             return docBuilder.parse(uri.toURL().openStream());
