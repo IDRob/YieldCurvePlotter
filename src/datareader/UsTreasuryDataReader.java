@@ -29,7 +29,7 @@ public class UsTreasuryDataReader {
     /**
      * A map of coupon bearing treasury bill element tag keys to the corresponding months value.
      */
-    private final static Map<String, Integer> COUPON_BEARING_TREASURY_BILLS = new HashMap<>()
+    private final static Map<String, Integer> COUPON_BEARING_TREASURY_BILLS = new HashMap<String, Integer>()
     {{
         put("d:BC_6MONTH",6);
         put("d:BC_1YEAR",12);
@@ -80,6 +80,7 @@ public class UsTreasuryDataReader {
                 if (elementDate.equals(date)) {
                     return new TreeMap<>(COUPON_BEARING_TREASURY_BILLS.entrySet()
                             .stream()
+                            .filter(entry -> eElement.getElementsByTagName(entry.getKey()).getLength() > 0)
                             .collect(Collectors.toMap(
                                     Map.Entry::getValue,
                                     e -> Double.parseDouble(eElement.getElementsByTagName(e.getKey()).item(0).getTextContent()) / 100)));

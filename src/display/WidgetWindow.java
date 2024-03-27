@@ -2,16 +2,15 @@ package display;
 
 import csvwriter.CsvWriter;
 import datareader.UsTreasuryDataReader;
+import datareader.test.UsTreasuryDataReaderTest;
 import numericalsolutions.interpolator.Interpolator;
-import org.jfree.ui.RefineryUtilities;
+import numericalsolutions.interpolator.LogarithmicInterpolator;
 import org.w3c.dom.Document;
 import display.plotter.PlotGraphJFree;
 import rates.Curves;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NavigableMap;
@@ -19,43 +18,49 @@ import java.util.NavigableMap;
 /**
  * This class holds the yield curve plotter widget.
  */
-public class WidgetWindow {
+public class WidgetWindow extends JFrame{
 
     /**
      * Widget lets user choose between available dates, show graph and save csv to downloads.
-     *
-     * @param usTreasuryRateData the xml US Treasury Bill data document
-     * @param precision the required precision for the produced zero curve
-     * @param interpolator the interpolator used to estimate missing zero curve values
      */
-    public static void runWidget(Document usTreasuryRateData, double precision, Interpolator interpolator) {
+    public static void runWidget() {
 
-        UsTreasuryDataReader usTreasuryDataReader = new UsTreasuryDataReader();
-        List<LocalDate> dates = usTreasuryDataReader.getDates(usTreasuryRateData);
+        double precision = 1E-20;
+        Interpolator interpolator = new LogarithmicInterpolator();
 
         JFrame frame = new JFrame("Yield Curve Plotter");
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 500);
-        frame.setLocation(430, 100);
+        frame.setSize(500, 1000);
+        frame.setLocation(0, 0);
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // added code
-
         frame.add(panel);
-        JLabel lbl = new JLabel("Select an available date");
-        lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        panel.add(lbl);
-        final JComboBox<LocalDate> cb = new JComboBox<>(dates.toArray(LocalDate[]::new));
+        // Uncomment to use saved 2023 data
+        //Document usTreasuryRateData = UsTreasuryDataReaderTest.getDocument("TreasuryData.xml");
 
-        cb.setMaximumSize(cb.getPreferredSize());
-        cb.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(cb);
+        // Uncomment to use live 2024 data
+        Document usTreasuryRateData = UsTreasuryDataReader.getUSTreasuryRateData("2024");
 
-        JButton btn = new JButton("Show Graph");
-        btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(btn);
+        UsTreasuryDataReader usTreasuryDataReader = new UsTreasuryDataReader();
+        JLabel dateLabel = new JLabel("Select an available date");
+        dateLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(dateLabel);
+
+        List<LocalDate> dates = usTreasuryDataReader.getDates(usTreasuryRateData);
+        LocalDate[] datesArray = new LocalDate[dates.size()];
+        datesArray = dates.toArray(datesArray);
+        final JComboBox<LocalDate> dateDropDown = new JComboBox<>(datesArray);
+
+        dateDropDown.setMaximumSize(dateDropDown.getPreferredSize());
+        dateDropDown.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(dateDropDown);
+
+        JButton showGraphBtn = new JButton("Show Graph");
+        showGraphBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(showGraphBtn);
 
         JButton downloadBtn = new JButton("Save CSV to Download Folder");
         downloadBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -63,8 +68,8 @@ public class WidgetWindow {
 
         frame.setVisible(true);
 
-        btn.addActionListener(e -> {
-            LocalDate selectedDate =(LocalDate) cb.getSelectedItem();
+        showGraphBtn.addActionListener(showGraphPress -> {
+            LocalDate selectedDate =(LocalDate) dateDropDown.getSelectedItem();
 
             if (selectedDate != null) {
                 NavigableMap<Integer, Double> dateSpecificParData =
@@ -74,15 +79,17 @@ public class WidgetWindow {
 
                 PlotGraphJFree chart = new PlotGraphJFree("Yield Curve Plotter",
                         "Treasury Yield Curves: " + selectedDate, curves);
+
+                chart.setSize(500, 1000);
+                chart.setLocation(500, 0);
                 chart.pack();
                 chart.setVisible( true );
-                RefineryUtilities.centerFrameOnScreen( chart );
             }
 
         });
 
-        downloadBtn.addActionListener(e -> {
-            LocalDate selectedDate =(LocalDate) cb.getSelectedItem();
+        downloadBtn.addActionListener(downloadPress -> {
+            LocalDate selectedDate =(LocalDate) dateDropDown.getSelectedItem();
 
             if (selectedDate != null) {
                 NavigableMap<Integer, Double> dateSpecificParData =

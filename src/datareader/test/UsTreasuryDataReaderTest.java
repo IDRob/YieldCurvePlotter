@@ -47,7 +47,7 @@ public class UsTreasuryDataReaderTest {
     public void testDataReaderToZero(){
         double precision = 0.000001;
         Interpolator interpolator = new LogarithmicInterpolator();
-        LocalDate testDate = new UsTreasuryDataReader().getDates(DOCUMENT).getFirst();
+        LocalDate testDate = new UsTreasuryDataReader().getDates(DOCUMENT).get(0);
         NavigableMap<Integer, Double> dateSpecificParData = new UsTreasuryDataReader().getsParDataForDate(testDate, DOCUMENT);
         Curves curves = Curves.of(precision, interpolator, dateSpecificParData);
         NavigableMap<Integer, Double> zeroCurve = curves.getZeroCurve().getMonthToRateCurve();

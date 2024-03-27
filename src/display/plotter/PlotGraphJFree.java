@@ -2,9 +2,13 @@ package display.plotter;
 
 import java.awt.Color;
 import java.awt.BasicStroke;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.ui.ApplicationFrame;
@@ -40,7 +44,7 @@ public class PlotGraphJFree extends ApplicationFrame  {
                 true , true , false);
 
         ChartPanel chartPanel = new ChartPanel( chart );
-        chartPanel.setPreferredSize( new java.awt.Dimension( 1024, 768 ) );
+        //chartPanel.setPreferredSize( new java.awt.Dimension( 1024, 1000 ) );
         final XYPlot plot = chart.getXYPlot( );
 
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
@@ -48,6 +52,14 @@ public class PlotGraphJFree extends ApplicationFrame  {
         renderer.setSeriesPaint( 1 , Color.GREEN );
         renderer.setSeriesStroke( 0 , new BasicStroke( 0.5f ) );
         renderer.setSeriesStroke( 1 , new BasicStroke( 0.5f ) );
+
+        List<Double> allValues = getAllValues(curves);
+        double min = allValues.get(0)*0.95;
+        double max = getAllValues(curves).get(allValues.size() - 1)*1.05;
+
+        ValueAxis rangeAxis = plot.getRangeAxis();
+        rangeAxis.setAutoRange(false);
+        rangeAxis.setRange(min, max);
 
         plot.setRenderer( renderer );
         setContentPane( chartPanel );
@@ -65,6 +77,14 @@ public class PlotGraphJFree extends ApplicationFrame  {
         dataset.addSeries( parCurves );
         dataset.addSeries( zeroCurves );
         return dataset;
+    }
+
+    private List<Double> getAllValues(Curves curves) {
+        List<Double> parValues = new ArrayList<>(curves.getParCurve().getMonthToRateCurve().values());
+        List<Double> zeroValues = new ArrayList<>(curves.getZeroCurve().getMonthToRateCurve().values());
+        parValues.addAll(zeroValues);
+        parValues.sort(Comparator.naturalOrder());
+        return parValues;
     }
 
 }
